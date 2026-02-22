@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detect Disease - LeafCure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/leafcheck-theme.css') }}">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1, h2 { color: #667eea; text-align: center; }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        #preview {
+            max-width: 100%;
+            display: none;
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+
+        video {
+            display: none;
+            margin: 20px auto;
+            border-radius: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            color: white;
+            padding: 14px 35px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #f4f6fa;
+            border-radius: 12px;
+        }
+
+        .back-btn {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        hr {
+            margin: 35px 0;
+            border: none;
+            height: 2px;
+            background: #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="theme-switch">
+    <label>
+        🌞 / 🌙
+        <input type="checkbox" id="themeToggle" onchange="switchTheme()">
+    </label>
+</div>
+
+
+<div class="container">
+
+    <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+    <h1>🔍 Plant Disease Detection</h1>
+
+    <!-- UPLOAD -->
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <p style="font-size:48px;">📁</p>
+        <p>Click to upload leaf image</p>
+        <p style="color:#999;">JPG / PNG (Max 5MB)</p>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" hidden onchange="handleFile(event)">
+    <img id="preview">
+
+    <hr>
+
+    <!-- CAMERA -->
+    <h2>📸 Capture Using Camera</h2>
+
+    <video id="video" width="320" height="240" autoplay playsinline></video>
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+    <div style="text-align:center;">
+        <button class="btn" onclick="startCamera()">Open Camera</button>
+        <button class="btn" id="captureBtn" style="display:none;" onclick="captureImage()">Capture</button>
+        <button class="btn" id="retakeBtn" style="display:none;" onclick="retakeImage()">Retake</button>
+    </div>
+
+    <!-- ANALYZE -->
+    <div style="text-align:center;">
+        <button class="btn" id="detectBtn" style="display:none;" onclick="detectDisease()">Analyze Image</button>
+    </div>
+
+    <div id="loading" style="display:none;text-align:center;margin-top:20px;">
+        🔍 Analyzing image...
+    </div>
+
+    <!-- RESULT -->
+    <div class="result" id="result">
+        <h3>Detection Result</h3>
+        <p><b>Disease:</b> <span id="diseaseName"></span></p>
+        <p><b>Confidence:</b> <span id="confidence"></span></p>
+        <p><b>Severity:</b> <span id="severity"></span></p>
+        <p><b>Treatment:</b></p>
+        <p id="treatment" style="color:#666;"></p>
+    </div>
+    <a href="/download_report">
+    <button style="background:green; color:white; padding:10px; margin-top:10px;">
+        Download Report (PDF)
+    </button>
+</a>
+<a href="/remedies">
+    <button style="background:orange; color:white; padding:10px;">
+        Buy Medicines
+    </button>
+</a>
+
+
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+    apiKey: "AIzaSyAZNQxPhPOMeGgblrlEDt0xbKysz8oOtmk",
+    authDomain: "leafcure-9eeab.firebaseapp.com",
+    projectId: "leafcure-9eeab",
+    appId: "1:839597084680:web:2d7e5cba7913d0dba481bd"
+});
+
+let selectedFile = null;
+let stream = null;
+
+const preview = document.getElementById("preview");
+const detectBtn = document.getElementById("detectBtn");
+const captureBtn = document.getElementById("captureBtn");
+const retakeBtn = document.getElementById("retakeBtn");
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+
+/* UPLOAD */
+function handleFile(e) {
+    selectedFile = e.target.files[0];
+    preview.src = URL.createObjectURL(selectedFile);
+    preview.style.display = "block";
+    detectBtn.style.display = "inline-block";
+}
+
+/* CAMERA */
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(s => {
+            stream = s;
+            video.srcObject = stream;
+            video.style.display = "block";
+            captureBtn.style.display = "inline-block";
+        })
+        .catch(() => alert("Camera access denied"));
+}
+
+function captureImage() {
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    stream.getTracks().forEach(t => t.stop());
+    video.style.display = "none";
+    captureBtn.style.display = "none";
+    retakeBtn.style.display = "inline-block";
+
+    canvas.toBlob(blob => {
+        selectedFile = new File([blob], "camera_leaf.png", { type: "image/png" });
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = "block";
+        detectBtn.style.display = "inline-block";
+    });
+}
+
+function retakeImage() {
+    preview.style.display = "none";
+    detectBtn.style.display = "none";
+    retakeBtn.style.display = "none";
+    startCamera();
+}
+
+/* DETECT */
+async function detectDisease() {
+    if (!selectedFile) return alert("Select or capture image");
+
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("result").style.display = "none";
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    const user = firebase.auth().currentUser;
+    const token = await user.getIdToken();
+
+    const res = await fetch("/api/predict", {
+        method: "POST",
+        headers: { Authorization: token },
+        body: formData
+    });
+
+    const data = await res.json();
+    document.getElementById("loading").style.display = "none";
+
+    if (!data.success) return alert(data.error);
+
+    document.getElementById("result").style.display = "block";
+    document.getElementById("diseaseName").textContent = data.disease;
+    document.getElementById("confidence").textContent = data.confidence;
+    document.getElementById("severity").textContent = data.severity;
+    document.getElementById("treatment").textContent =
+        data.severity === "High"
+            ? "Immediate treatment required."
+            : data.severity === "Medium"
+            ? "Apply preventive care."
+            : "Plant is healthy.";
+}
+</script>
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+</body>
+</html>

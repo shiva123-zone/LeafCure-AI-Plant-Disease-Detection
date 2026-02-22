@@ -1,0 +1,173 @@
+/* =========================================
+   LEAFCURE – LEAFCHECK AI EXACT UI THEME
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+    --green: #4CAF50;
+    --green-dark: #2e7d32;
+    --bg-light: #eaf5ec;
+    --glass: rgba(255,255,255,0.78);
+    --radius: 20px;
+    --shadow: 0 25px 60px rgba(0,0,0,0.18);
+}
+
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* PAGE BACKGROUND (EXACT) */
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, #f3fbf5 20%, transparent 60%),
+        radial-gradient(circle at bottom right, #dff0e5 20%, transparent 60%),
+        linear-gradient(135deg, #edf7f1, #d9ecdf);
+}
+
+/* CENTERED PAGE */
+.page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+/* MAIN WINDOW (MAC STYLE) */
+.window {
+    width: 100%;
+    max-width: 1200px;
+    background: var(--glass);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+/* TOP BAR */
+.window-header {
+    height: 52px;
+    background: linear-gradient(#fdfdfd, #ececec);
+    display: flex;
+    align-items: center;
+    padding-left: 18px;
+}
+
+.window-header span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.red { background:#ff5f56 }
+.yellow { background:#ffbd2e }
+.green { background:#27c93f }
+
+/* NAVBAR */
+.navbar {
+    background: rgba(255,255,255,0.95);
+    padding: 18px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar h1 {
+    color: var(--green);
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* MAIN CONTENT */
+.content {
+    padding: 50px;
+}
+
+/* GRID (UPLOAD + RESULT) */
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+}
+
+/* UPLOAD BOX */
+.upload-box {
+    border: 2px dashed var(--green);
+    border-radius: var(--radius);
+    padding: 70px;
+    text-align: center;
+    background: white;
+    cursor: pointer;
+}
+
+.upload-box h2 {
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.upload-btn {
+    margin-top: 25px;
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 30px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* RESULT CARD */
+.result-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.result-card img {
+    width: 100%;
+    border-radius: 14px;
+    margin-bottom: 12px;
+}
+
+.progress {
+    height: 6px;
+    background: #eee;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 8px 0 15px;
+}
+
+.progress div {
+    height: 100%;
+    background: var(--green);
+    width: 0%;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border-collapse: collapse;
+}
+
+th {
+    background: var(--green);
+    color: white;
+    padding: 16px;
+}
+
+td {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeafCure - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/leafcheck-theme.css') }}">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background: linear-gradient(135deg,#5f6dff,#7f53ac);
+    min-height:100vh;
+}
+
+/* NAVBAR */
+.navbar{
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding:15px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 20px rgba(0,0,0,0.2);
+}
+
+.navbar h1{
+    color:white;
+    display:flex;
+    align-items:center;
+}
+
+/* PROFILE ICON */
+.profile-section{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.profile-icon{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:linear-gradient(45deg,#667eea,#764ba2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+    box-shadow:0 3px 12px rgba(0,0,0,0.3);
+}
+
+.logout-btn{
+    padding:10px 20px;
+    background:linear-gradient(45deg,#667eea,#764ba2);
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* MAIN GLASS PANEL */
+.container{
+    max-width:1100px;
+    margin:50px auto;
+    padding:30px;
+    border-radius:20px;
+
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+}
+
+h1.welcome{
+    color:white;
+    text-align:center;
+}
+
+.welcome-subtitle{
+    color:rgba(255,255,255,0.7);
+    text-align:center;
+    margin-bottom:30px;
+}
+
+/* CARDS GRID */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+    margin-top:30px;
+}
+
+/* GLASS CARDS */
+.card{
+    background:rgba(255,255,255,0.12);
+    padding:30px;
+    border-radius:18px;
+    text-align:center;
+    cursor:pointer;
+
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+
+    box-shadow:0 6px 25px rgba(0,0,0,0.25);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.4);
+}
+
+.card h2{
+    color:white;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:rgba(255,255,255,0.75);
+}
+
+.icon{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+/* LIGHT MODE OVERRIDE */
+body:not(.dark-mode) .container{
+    background:white;
+}
+
+body:not(.dark-mode) .card{
+    background:#f5f5f5;
+}
+
+body:not(.dark-mode) .card p{
+    color:#444;
+}
+
+body:not(.dark-mode) .navbar{
+    background:white;
+}
+
+body:not(.dark-mode) .navbar h1{
+    color:#667eea;
+}
+/* ================= LIGHT THEME ================= */
+
+body:not(.dark-mode) h1.welcome{
+    color:#222;
+}
+
+body:not(.dark-mode) .welcome-subtitle{
+    color:#555;
+}
+
+body:not(.dark-mode) .card h2{
+    color:#667eea;
+}
+
+body:not(.dark-mode) .card p{
+    color:#444;
+}
+
+body:not(.dark-mode) .icon{
+    color:#667eea;
+}
+
+/* ================= DARK THEME ================= */
+
+body.dark-mode h1.welcome{
+    color:white;
+}
+
+body.dark-mode .welcome-subtitle{
+    color:rgba(255,255,255,0.8);
+}
+
+body.dark-mode .card h2{
+    color:#8fa6ff;
+}
+
+body.dark-mode .card p{
+    color:rgba(255,255,255,0.75);
+}
+
+body.dark-mode .icon{
+    color:#8fa6ff;
+}
+
+
+</style>
+ 
+</head>
+<body>
+    <div class="theme-switch">
+    <label>
+        🌞 / 🌙
+        <input type="checkbox" id="themeToggle" onchange="switchTheme()">
+    </label>
+</div>
+
+    
+    <div class="navbar">
+        <h1>🌿 LeafCure</h1>
+
+        <div class="profile-section">
+            <!-- Profile Icon -->
+            <a href="/profile" style="text-decoration: none;">
+                <div class="profile-icon" id="profileIcon" title="View Profile">
+                    U
+                </div>
+            </a>
+            
+            <!-- Logout Button -->
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1 class="welcome">Welcome to LeafCure Dashboard</h1>
+        <p class="welcome-subtitle" id="userGreeting">Detect plant diseases using AI-powered technology</p>
+        
+        <div class="cards">
+            <div class="card" onclick="window.location.href='/detect'">
+                <div class="icon">🔍</div>
+                <h2>Detect Disease</h2>
+                <p>Upload a leaf image to detect plant diseases using AI-powered machine learning</p>
+            </div>
+            
+            <div class="card" onclick="window.location.href='/history'">
+                <div class="icon">📊</div>
+                <h2>View History</h2>
+                <p>See your past disease detection results and track your analysis</p>
+            </div>
+            
+            <div class="card" onclick="window.location.href='/profile'">
+                <div class="icon">👤</div>
+                <h2>My Profile</h2>
+                <p>View and manage your account information and settings</p>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZNQxPhPOMeGgblrlEDt0xbKysz8oOtmk",
+            authDomain: "leafcure-9eeab.firebaseapp.com",
+            projectId: "leafcure-9eeab",
+            appId: "1:839597084680:web:2d7e5cba7913d0dba481bd"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        // Set user's initial in profile icon and personalized greeting
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // Get first letter of name or email
+                const initial = (user.displayName || user.email || 'U')[0].toUpperCase();
+                document.getElementById('profileIcon').textContent = initial;
+                
+                // Personalized greeting
+                const name = user.displayName || user.email.split('@')[0];
+                document.getElementById('userGreeting').textContent = `Welcome back, ${name}! Ready to analyze your plants?`;
+            } else {
+                // Redirect to login if not authenticated
+                window.location.href = '/login';
+            }
+        });
+        if (user.email === "admin@leafcure.com") {
+    document.body.innerHTML += `
+        <a href="/admin" style="position:fixed;bottom:20px;right:20px;
+        background:#000;color:white;padding:12px;border-radius:50%;">
+        🛡️</a>`;
+}
+
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = '/login';
+                }).catch((error) => {
+                    console.error('Logout error:', error);
+                });
+            }
+        }
+    </script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

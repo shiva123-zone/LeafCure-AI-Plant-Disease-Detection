@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeafCure - Remedies</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .buy-btn {
+            padding: 10px 15px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="theme-switch">
+    🌞 / 🌙
+    <input type="checkbox" id="themeToggle" onchange="switchTheme()">
+</div>
+
+<div class="navbar">
+    <h1>🌿 LeafCure Remedies</h1>
+
+    <div style="display:flex; gap:15px; align-items:center;">
+        <a href="/profile">
+            <div class="profile-icon" id="profileIcon">U</div>
+        </a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Recommended Medicines for Your Plant</h1>
+    <div class="cards" id="medicineList"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAZNQxPhPOMeGgblrlEDt0xbKysz8oOtmk",
+    authDomain: "leafcure-9eeab.firebaseapp.com",
+    projectId: "leafcure-9eeab",
+    appId: "1:839597084680:web:2d7e5cba7913d0dba481bd"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(user => {
+    if(user){
+        document.getElementById('profileIcon').textContent =
+        (user.displayName || user.email)[0].toUpperCase();
+    }
+    else{
+        window.location.href='/login'
+    }
+});
+
+function logout(){
+    firebase.auth().signOut().then(()=>{
+        window.location.href='/login'
+    });
+}
+
+// FETCH MEDICINES
+fetch("/get_remedies")
+.then(res => res.json())
+.then(data => {
+
+    let div = document.getElementById("medicineList");
+
+    data.forEach(med => {
+
+        div.innerHTML += `
+            <div class="card">
+                <h3>${med.name}</h3>
+                <p>Price: ₹${med.price}</p>
+                <a href="${med.link}" target="_blank">
+                    <button class="buy-btn">Buy Now</button>
+                </a>
+            </div>
+        `
+    })
+});
+</script>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+</body>
+</html>

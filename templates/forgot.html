@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Password - LeafCure</title>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <!-- Google Font -->
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/leafcheck-theme.css') }}">
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: "Poppins", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            /* 🌿 Background Image */
+            background: url("https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=627&auto=format&fit=crop")
+                        no-repeat center center/cover;
+            overflow: hidden;
+        }
+
+        /* Floating Leaves Animation */
+        .leaf {
+            position: absolute;
+            width: 35px;
+            opacity: 0.7;
+            animation: floatLeaf 10s infinite linear;
+        }
+
+        @keyframes floatLeaf {
+            0% { transform: translateY(-150px) rotate(0deg); }
+            50% { transform: translateY(350px) rotate(120deg); }
+            100% { transform: translateY(900px) rotate(200deg); }
+        }
+
+        /* Glass Card */
+        .card {
+            width: 340px;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+
+        .reset-btn {
+            width: 95%;
+            padding: 12px;
+            font-size: 16px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .reset-btn:hover {
+            background: #1b5e20;
+        }
+
+        #msg {
+            margin-top: 10px;
+            color: #ffdddd;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="theme-switch">
+    <label>
+        🌞 / 🌙
+        <input type="checkbox" id="themeToggle" onchange="switchTheme()">
+    </label>
+</div>
+
+
+    <!-- Floating Leaves -->
+    <img class="leaf" style="left: 15%;" src="https://cdn-icons-png.flaticon.com/512/290/290673.png">
+    <img class="leaf" style="left: 55%; animation-delay: 2s;" src="https://cdn-icons-png.flaticon.com/512/4150/4150897.png">
+    <img class="leaf" style="left: 80%; animation-delay: 4s;" src="https://cdn-icons-png.flaticon.com/512/616/616494.png">
+
+    <div class="card">
+        <h2>Reset Your Password</h2>
+
+        <input id="email" type="text" placeholder="Enter your email" />
+
+        <button class="reset-btn" onclick="resetPassword()">Send Reset Link</button>
+
+        <p id="msg"></p>
+    </div>
+
+    <script src="/static/js/forgot.js"></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+
+</body>
+</html>
